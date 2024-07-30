@@ -1,35 +1,42 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import "./App.css";
+import Counter from "./Counter";
+import Stats from "./Stats";
+import { increment, decrement } from "./features/counters/counterSlice.js";
 
 function App() {
-  const [count, setCount] = useState(0)
+    const counters = useSelector(state => state.counters);
 
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    const dispatch = useDispatch();
+
+    const total = counters.reduce((sum, current) => {
+        console.log(current);
+        return sum + current.counter;
+    }, 0);
+
+    const handleIncrement = id => {
+        dispatch(increment(id));
+    };
+    const handleDecrement = id => {
+        dispatch(decrement(id));
+    };
+
+    return (
+        <>
+            {counters.map(el => (
+                <Counter
+                    handleIn={handleIncrement}
+                    handleDe={handleDecrement}
+                    key={el.id}
+                    counterId={el.id}
+                    counter={el.counter}
+                />
+            ))}
+
+            <Stats counter={total} />
+        </>
+    );
 }
 
-export default App
+export default App;
